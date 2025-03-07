@@ -27,6 +27,8 @@ type Client struct {
 
 	nmsg    []byte
 	session *Session
+
+	WithNegotiateCheck bool
 }
 
 func (c *Client) Negotiate() (nmsg []byte, err error) {
@@ -80,7 +82,7 @@ func (c *Client) Authenticate(cmsg []byte) (amsg []byte, err error) {
 
 	flags := le.Uint32(c.nmsg[12:16]) & le.Uint32(cmsg[20:24])
 
-	if flags&NTLMSSP_REQUEST_TARGET == 0 {
+	if c.WithNegotiateCheck && (flags&NTLMSSP_REQUEST_TARGET == 0) {
 		return nil, errors.New("invalid negotiate flags")
 	}
 
@@ -95,7 +97,7 @@ func (c *Client) Authenticate(cmsg []byte) (amsg []byte, err error) {
 	}
 	targetName := cmsg[targetNameBufferOffset : targetNameBufferOffset+uint32(targetNameLen)] // cmsg.TargetName
 
-	if flags&NTLMSSP_NEGOTIATE_TARGET_INFO == 0 {
+	if c.WithNegotiateCheck && (flags&NTLMSSP_NEGOTIATE_TARGET_INFO == 0) {
 		return nil, errors.New("invalid negotiate flags")
 	}
 
