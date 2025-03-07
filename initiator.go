@@ -18,12 +18,13 @@ type Initiator interface {
 // NTLMInitiator implements session-setup through NTLMv2.
 // It doesn't support NTLMv1. You can use Hash instead of Password.
 type NTLMInitiator struct {
-	User        string
-	Password    string
-	Hash        []byte
-	Domain      string
-	Workstation string
-	TargetSPN   string
+	User               string
+	Password           string
+	Hash               []byte
+	Domain             string
+	Workstation        string
+	TargetSPN          string
+	WithNegotiateCheck bool
 
 	ntlm   *ntlm.Client
 	seqNum uint32
@@ -35,12 +36,13 @@ func (i *NTLMInitiator) oid() asn1.ObjectIdentifier {
 
 func (i *NTLMInitiator) initSecContext() ([]byte, error) {
 	i.ntlm = &ntlm.Client{
-		User:        i.User,
-		Password:    i.Password,
-		Hash:        i.Hash,
-		Domain:      i.Domain,
-		Workstation: i.Workstation,
-		TargetSPN:   i.TargetSPN,
+		User:               i.User,
+		Password:           i.Password,
+		Hash:               i.Hash,
+		Domain:             i.Domain,
+		Workstation:        i.Workstation,
+		TargetSPN:          i.TargetSPN,
+		WithNegotiateCheck: i.WithNegotiateCheck,
 	}
 	nmsg, err := i.ntlm.Negotiate()
 	if err != nil {
