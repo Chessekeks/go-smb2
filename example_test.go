@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net"
 
-	"github.com/hirochachacha/go-smb2"
+	"github.com/Chessekeks/go-smb2"
 )
 
 func Example() {
